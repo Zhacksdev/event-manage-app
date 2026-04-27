@@ -27,8 +27,8 @@ Terdapat 4 service utama:
 |--------|----------|----------|
 | 👤 UserService | Manajemen data user | Laravel (PHP) |
 | 📅 EventService | Manajemen event | Laravel (PHP) |
-| 📝 RegistrationService | Pendaftaran event | Flask (Python) |
-| 🔔 NotificationService | Notifikasi | Flask (Python) |
+| 📝 RegistrationService | Pendaftaran event | Express (Node js) |
+| 🔔 NotificationService | Notifikasi | Express (Node js) |
 
 ---
 
@@ -36,10 +36,9 @@ Terdapat 4 service utama:
 
 - **Backend**
   - Laravel 11 (PHP)
-  - Flask (Python)
+  - Express (Node js)
 - **Database**
   - MySQL
-  - SQLite
 - **Tools**
   - Postman
   - Git & GitHub
