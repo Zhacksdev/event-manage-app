@@ -115,7 +115,7 @@ class EventController extends Controller
             ], 404);
         }
 
-        $event->registered_count = $request->registered_count;
+        $event->quota = $request->quota;
         $event->save();
 
         return response()->json([
