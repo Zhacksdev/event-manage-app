@@ -11,7 +11,7 @@ Layanan ini bertanggung jawab untuk mengelola data event kampus seperti seminar,
 
 - **Framework:** Laravel 11 (PHP >= 8.2)
 - **Database:** MySQL — `events_db`
-- **Port:** `8002`
+- **Port:** `8001`
 
 ## Cara Menjalankan
 
@@ -27,14 +27,14 @@ cp .env.example .env
 #   DB_DATABASE=events_db
 #   DB_USERNAME=root
 #   DB_PASSWORD=your_password
-#   USER_SERVICE_URL=http://localhost:8001/api
+#   USER_SERVICE_URL=http://localhost:8000/api
 
 # 3. Migrasi database & generate key
 php artisan key:generate
 php artisan migrate --seed
 
 # 4. Jalankan server
-php artisan serve --port=8002
+php artisan serve --port=8001
 ```
 
 > ⚠️ Pastikan **UserService sudah berjalan** sebelum menjalankan EventService.
@@ -71,7 +71,7 @@ Tabel: `events`
 
 ## Komunikasi ke Service Lain
 
-- **Consume UserService** (`http://localhost:8001/api`):
+- **Consume UserService** (`http://localhost:8000/api`):
   - `GET /api/users/{id}` — Memvalidasi keberadaan user penyelenggara saat membuat event baru
 
 ## Dokumentasi Postman
