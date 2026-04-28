@@ -1,173 +1,71 @@
-# 🚀 Event Management System (Microservices Architecture)
+# NotificationService — Event Management System
 
-> Sistem pendaftaran & manajemen event kampus berbasis **microservices**  
-> Dibangun untuk kebutuhan integrasi sistem pada mata kuliah **Enterprise Application Integration (EAI)**
+## Deskripsi
 
----
+Layanan ini bertanggung jawab untuk mengirimkan notifikasi konfirmasi kepada mahasiswa setelah berhasil mendaftar ke suatu event.
 
-## 📌 Overview
+- **Peran Provider:** Menyediakan log notifikasi yang telah dikirim
+- **Peran Consumer:** Mengambil detail registrasi dari RegistrationService untuk mengisi konten notifikasi
 
-Project ini merupakan sistem yang memungkinkan mahasiswa untuk:
-- Mendaftar event (seminar, lomba, workshop)
-- Melihat riwayat registrasi
-- Mendapatkan notifikasi setelah pendaftaran
+## Teknologi
 
-Sistem menggunakan pendekatan **microservices** dengan komunikasi:
-- 🌐 HTTP REST API
-- 📦 Format JSON
-- 🔗 Service-to-service (tanpa API Gateway)
+- **Framework:** Python (Flask >= 3.11)
+- **Database:** SQLite — `notifications_db`
+- **Port:** `8003`
 
----
-
-## 🧠 Arsitektur Sistem
-
-Terdapat 4 service utama:
-
-| Service | Deskripsi | Teknologi |
-|--------|----------|----------|
-| 👤 UserService | Manajemen data user | Laravel (PHP) |
-| 📅 EventService | Manajemen event | Laravel (PHP) |
-| 📝 RegistrationService | Pendaftaran event | Express (Node js) |
-| 🔔 NotificationService | Notifikasi | Express (Node js) |
-
----
-
-## ⚙️ Tech Stack
-
-- **Backend**
-  - Laravel 11 (PHP)
-  - Express (Node js)
-- **Database**
-  - MySQL
-- **Tools**
-  - Postman
-  - Git & GitHub
-
----
-
-## 📂 Struktur Project
+## Cara Menjalankan
 
 ```bash
-event-management-system/
-│
-├── user-service/
-├── event-service/
-├── registration-service/
-└── notification-service/
-```
-
----
-
-## 🚀 Cara Menjalankan
-
-### 1. Clone Repository
-```bash
-git clone https://github.com/username/event-management-system.git
-cd event-management-system
-```
-
-### 2. Jalankan Service (Urutan Penting ⚠️)
-
-1. **UserService**
-```bash
-cd user-service
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-php artisan serve --port=8001
-```
-
-2. **EventService**
-```bash
-cd event-service
-composer install
-php artisan serve --port=8002
-```
-
-3. **NotificationService**
-```bash
+# 1. Clone repository
+git clone https://github.com/<org>/notification-service.git
 cd notification-service
+
+# 2. Buat virtual environment dan install dependency
+python -m venv venv
+source venv/bin/activate        # Linux/Mac
+# venv\Scripts\activate         # Windows
+
 pip install -r requirements.txt
+
+# 3. Konfigurasi environment
+cp .env.example .env
+# Edit .env:
+#   REGISTRATION_SERVICE_URL=http://localhost:8002/api
+
+# 4. Jalankan server
 python app.py
 ```
 
-4. **RegistrationService**
-```bash
-cd registration-service
-pip install -r requirements.txt
-python app.py
-```
+> ⚠️ Pastikan **RegistrationService sudah berjalan** sebelum menjalankan NotificationService.
 
----
+## Endpoints
 
-## 📡 API Endpoint (Contoh)
+| Method | Endpoint | Peran | Deskripsi |
+|--------|----------|-------|-----------|
+| POST | `/api/notify` | Consumer | Terima trigger notifikasi dan ambil detail ke RegistrationService |
+| GET | `/api/notifications` | Provider | Ambil semua log notifikasi |
+| GET | `/api/notifications/{id}` | Provider | Ambil detail notifikasi berdasarkan ID |
+| GET | `/api/notifications/user/{userId}` | Provider | Semua notifikasi untuk satu user |
 
-### UserService
-```http
-GET    /api/users
-GET    /api/users/{id}
-POST   /api/users
-PUT    /api/users/{id}
-DELETE /api/users/{id}
-```
+## Skema Database
 
-### EventService
-```http
-GET    /api/events
-POST   /api/events
-PUT    /api/events/{id}
-DELETE /api/events/{id}
-```
+Tabel: `notifications`
 
-### RegistrationService
-```http
-POST   /api/registrations
-GET    /api/registrations/{id}
-```
+| Field | Tipe | Keterangan |
+|-------|------|------------|
+| id | INTEGER | Primary Key, Auto Increment |
+| registration_id | VARCHAR(36) | Referensi ke RegistrationService |
+| user_id | INTEGER | ID mahasiswa penerima |
+| type | VARCHAR(50) | `registration_confirmed`, `event_reminder` |
+| message | TEXT | Isi notifikasi |
+| sent_at | TIMESTAMP | Waktu dikirim |
+| status | VARCHAR(20) | `sent`, `failed` (default: `sent`) |
 
-### NotificationService
-```http
-POST   /api/notify
-GET    /api/notifications
-```
+## Komunikasi ke Service Lain
 
----
+- **Consume RegistrationService** (`http://localhost:8002/api`):
+  - `GET /api/registrations/{id}` — Mengambil detail registrasi untuk mengisi konten pesan notifikasi sebelum dikirim
 
-## 📮 Postman Documentation
+## Dokumentasi Postman
 
-👉 [Tambahkan link Postman kamu di sini]
-
----
-
-## 🎥 Demo
-
-👉 [Tambahkan link video demo di sini]
-
----
-
-## 👥 Tim Pengembang
-
-| Nama | Role |
-|-----|------|
-| Nama 1 | UserService |
-| Nama 2 | EventService |
-| Nama 3 | RegistrationService |
-| Nama 4 | NotificationService |
-
----
-
-## 💡 Future Improvement
-
-- Tambah API Gateway
-- Implementasi authentication (JWT)
-- Frontend (React / Next.js)
-- Message broker (RabbitMQ / Kafka)
-
----
-
-## ⭐ Penutup
-
-Project ini dibuat sebagai implementasi nyata dari:
-> **Enterprise Application Integration (EAI)**  
-dengan pendekatan modern berbasis microservices.
+[Link Postman Documentation]
