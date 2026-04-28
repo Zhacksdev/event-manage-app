@@ -28,7 +28,7 @@ Terdapat 4 service utama:
 | 👤 UserService | Manajemen data user | Laravel (PHP) |
 | 📅 EventService | Manajemen event | Laravel (PHP) |
 | 📝 RegistrationService | Pendaftaran event | Express (Node js) |
-| 🔔 NotificationService | Notifikasi | Express (Node js) |
+| 🔔 NotificationService | Notifikasi | Flask (Python) |
 
 ---
 
@@ -37,6 +37,7 @@ Terdapat 4 service utama:
 - **Backend**
   - Laravel 11 (PHP)
   - Express (Node js)
+  - Flask (Python)
 - **Database**
   - MySQL
 - **Tools**
@@ -150,19 +151,10 @@ GET    /api/notifications
 
 | Nama | Role |
 |-----|------|
-| Nama 1 | UserService |
-| Nama 2 | EventService |
-| Nama 3 | RegistrationService |
-| Nama 4 | NotificationService |
-
----
-
-## 💡 Future Improvement
-
-- Tambah API Gateway
-- Implementasi authentication (JWT)
-- Frontend (React / Next.js)
-- Message broker (RabbitMQ / Kafka)
+| Jingga Amelia Putri | UserService |
+| Keysha Putri Azzahra | EventService |
+| Ahmad Nurtajala | RegistrationService |
+| Muhammad Zacky | NotificationService |
 
 ---
 
