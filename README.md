@@ -11,7 +11,7 @@ Layanan ini bertanggung jawab untuk mengelola data user/mahasiswa yang terdaftar
 
 - **Framework:** Laravel 11 (PHP >= 8.2)
 - **Database:** MySQL — `users_db`
-- **Port:** `8001`
+- **Port:** `8000`
 
 ## Cara Menjalankan
 
