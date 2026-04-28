@@ -27,14 +27,14 @@ cp .env.example .env
 #   DB_DATABASE=users_db
 #   DB_USERNAME=root
 #   DB_PASSWORD=your_password
-#   REGISTRATION_SERVICE_URL=http://localhost:8003/api
+#   REGISTRATION_SERVICE_URL=http://localhost:8002/api
 
 # 3. Migrasi database & generate key
 php artisan key:generate
 php artisan migrate --seed
 
 # 4. Jalankan server
-php artisan serve --port=8001
+php artisan serve --port=8000
 ```
 
 > ⚠️ Jalankan UserService **pertama** karena tidak bergantung pada service lain.
@@ -67,7 +67,7 @@ Tabel: `users`
 
 ## Komunikasi ke Service Lain
 
-- **Consume RegistrationService** (`http://localhost:8003/api`):
+- **Consume RegistrationService** (`http://localhost:8002/api`):
   - `GET /api/registrations/user/{id}` — Mengambil riwayat registrasi milik mahasiswa tertentu, dipanggil saat endpoint `/api/users/{id}/registrations` diakses
 
 ## Dokumentasi Postman
