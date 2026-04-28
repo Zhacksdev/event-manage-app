@@ -1,90 +1,83 @@
 # RegistrationService — Event Management System
 
 ## Deskripsi
-Layanan ini bertanggung jawab untuk mengelola pendaftaran mahasiswa ke event kampus (seminar, lomba, workshop).
 
-- **Peran Provider**: Menyediakan data pendaftaran, riwayat registrasi user, dan daftar peserta event — dikonsumsi oleh UserService, EventService, dan NotificationService.
-- **Peran Consumer**: Memanggil UserService untuk validasi user, EventService untuk validasi event & kuota, dan NotificationService untuk mengirim notifikasi konfirmasi.
+Layanan ini bertanggung jawab untuk mengelola proses pendaftaran mahasiswa ke event dan status transaksinya.
+
+- **Peran Provider:** Menyediakan data pendaftaran dan status transaksi untuk dikonsumsi oleh UserService dan NotificationService
+- **Peran Consumer:** Memvalidasi user ke UserService, memvalidasi event & kuota ke EventService, serta mengirim notifikasi ke NotificationService setelah pendaftaran berhasil
 
 ## Teknologi
-- **Framework**: Node.js + Express
-- **Database**: MySQL (`registrations_db`)
-- **Port**: `8003`
 
-## Prasyarat
-- Node.js >= 18.x
-- npm
-- MySQL >= 8.0
+- **Framework:** Node.js (Express)
+- **Database:** MySQL — `registrations_db`
+- **Port:** `8002`
 
 ## Cara Menjalankan
 
 ```bash
-# 1. Clone repository
+# 1. Clone repository dan install dependency
 git clone https://github.com/<org>/registration-service.git
 cd registration-service
-
-# 2. Install dependencies
 npm install
 
-# 3. Konfigurasi environment
+# 2. Konfigurasi environment
 cp .env.example .env
-# Edit .env sesuai konfigurasi lokal
+# Edit .env:
+#   PORT=8003
+#   DB_HOST=localhost
+#   DB_NAME=registrations_db
+#   DB_USER=root
+#   DB_PASSWORD=your_password
+#   USER_SERVICE_URL=http://localhost:8000/api
+#   EVENT_SERVICE_URL=http://localhost:8001/api
+#   NOTIF_SERVICE_URL=http://localhost:8003/api
 
-# 4. Jalankan service
+# 3. Jalankan server
 node app.js
-# atau development mode:
+# atau
 npm run dev
 ```
 
-> **Pastikan** UserService (8001), EventService (8002), dan NotificationService (8004) sudah berjalan terlebih dahulu.
+> ⚠️ Pastikan **UserService, EventService, dan NotificationService sudah berjalan** sebelum menjalankan RegistrationService.
 
 ## Endpoints
 
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| POST | `/api/registrations` | Daftar event (consume User & Event Service) |
-| GET | `/api/registrations/:id` | Detail registrasi (dikonsumsi NotificationService) |
-| GET | `/api/registrations/user/:userId` | Riwayat registrasi user (dikonsumsi UserService) |
-| GET | `/api/registrations/event/:eventId` | Semua peserta suatu event |
-| PUT | `/api/registrations/:id/status` | Update status registrasi |
-| DELETE | `/api/registrations/:id` | Batalkan registrasi |
+| Method | Endpoint | Peran | Deskripsi |
+|--------|----------|-------|-----------|
+| POST | `/api/registrations` | Provider + Consumer | Daftar event (validasi ke UserService & EventService, lalu kirim notifikasi) |
+| GET | `/api/registrations/{id}` | Provider | Ambil detail registrasi (dikonsumsi NotificationService) |
+| GET | `/api/registrations/user/{userId}` | Provider | Riwayat registrasi user (dikonsumsi UserService) |
+| GET | `/api/registrations/event/{eventId}` | Provider | Semua peserta event (dikonsumsi EventService) |
+| PUT | `/api/registrations/{id}/status` | Provider | Update status registrasi |
+| DELETE | `/api/registrations/{id}` | Provider | Batalkan registrasi |
 
-## Contoh Request
+## Skema Database
 
-### POST /api/registrations
-```json
-{
-  "user_id": 1,
-  "event_id": 2
-}
-```
+Tabel: `registrations`
 
-### Response sukses
-```json
-{
-  "success": true,
-  "message": "Registration successful",
-  "data": {
-    "id": "uuid-v4",
-    "user_id": 1,
-    "event_id": 2,
-    "user_name": "Budi Santoso",
-    "event_title": "Workshop UI/UX 2025",
-    "status": "confirmed",
-    "registered_at": "2025-01-01T10:00:00.000Z",
-    "confirmed_at": "2025-01-01T10:00:00.000Z"
-  }
-}
-```
+| Field | Tipe | Keterangan |
+|-------|------|------------|
+| id | VARCHAR(36) | Primary Key (UUID) |
+| user_id | BIGINT UNSIGNED | Referensi ke UserService |
+| event_id | BIGINT UNSIGNED | Referensi ke EventService |
+| user_name | VARCHAR(100) | Snapshot nama user |
+| event_title | VARCHAR(200) | Snapshot judul event |
+| status | ENUM | `pending`, `confirmed`, `cancelled` (default: `pending`) |
+| registered_at | TIMESTAMP | Waktu pendaftaran |
+| confirmed_at | TIMESTAMP | Waktu konfirmasi (nullable) |
 
 ## Komunikasi ke Service Lain
 
-| Service | Endpoint yang dipanggil | Tujuan |
-|---------|------------------------|--------|
-| UserService | `GET /api/users/:id` | Validasi user sebelum mendaftar |
-| EventService | `GET /api/events/:id` | Validasi event & cek kuota |
-| EventService | `PUT /api/events/:id/quota` | Update kuota setelah pendaftaran |
-| NotificationService | `POST /api/notify` | Kirim notifikasi konfirmasi |
+- **Consume UserService** (`http://localhost:8000/api`):
+  - `GET /api/users/{id}` — Validasi keberadaan mahasiswa sebelum mendaftar
+
+- **Consume EventService** (`http://localhost:8001/api`):
+  - `GET /api/events/{id}` — Validasi event dan mengecek kuota tersisa sebelum mendaftar
+
+- **Consume NotificationService** (`http://localhost:8003/api`):
+  - `POST /api/notify` — Mengirim notifikasi konfirmasi setelah pendaftaran berhasil
 
 ## Dokumentasi Postman
-[Link Postman Documentation] _(isi setelah export)_
+
+[Link Postman Documentation]
