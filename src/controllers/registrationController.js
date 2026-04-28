@@ -116,6 +116,31 @@ const createRegistration = async (req, res) => {
 };
 
 // ────────────────────────────────────────────────
+// GET /api/registrations
+// Provider: ambil semua data registrasi
+// ────────────────────────────────────────────────
+const getAllRegistrations = async (req, res) => {
+  try {
+    const registrations = await Registration.findAll({
+      order: [['registered_at', 'DESC']],
+    });
+
+    return res.json({
+      success: true,
+      total: registrations.length,
+      data: registrations,
+    });
+  } catch (err) {
+    console.error('[ERROR] getAllRegistrations:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: err.message,
+    });
+  }
+};
+
+// ────────────────────────────────────────────────
 // GET /api/registrations/:id
 // Provider: consumed by NotificationService
 // ────────────────────────────────────────────────
@@ -237,4 +262,5 @@ module.exports = {
   getRegistrationsByEvent,
   updateRegistrationStatus,
   cancelRegistration,
+  getAllRegistrations,
 };
